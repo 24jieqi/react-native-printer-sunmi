@@ -12,10 +12,7 @@ import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import SunmiPrinter from 'react-native-sunmi-printer';
 
-export default class App extends Component<{}> {
-  state = {
-    loading: false,
-  };
+export default class App extends Component {
   componentDidMount() {}
   handlePrint() {
     if (Platform.OS === 'ios') {
@@ -193,8 +190,8 @@ export default class App extends Component<{}> {
   render() {
     return (
       <View style={styles.container}>
-        <TouchableOpacity onPress={this.handlePrint}>
-          <Text>Print</Text>
+        <TouchableOpacity style={styles.btn} onPress={this.handlePrint}>
+          <Text style={styles.btnText}>Print</Text>
         </TouchableOpacity>
       </View>
     );
@@ -202,6 +199,17 @@ export default class App extends Component<{}> {
 }
 
 const styles = StyleSheet.create({
+  btn: {
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 6,
+    backgroundColor: 'green',
+  },
+  btnText: {
+    color: '#fff',
+    fontSize: 14,
+    lineHeight: 22,
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
