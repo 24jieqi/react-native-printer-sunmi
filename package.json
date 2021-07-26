@@ -2,7 +2,7 @@
   "name": "react-native-printer-sunmi",
   "title": "React Native Sunmi Printer",
   "version": "1.0.1",
-  "description": "",
+  "description": "react-native printer for sunmi",
   "main": "index.js",
   "files": [
     "README.md",
