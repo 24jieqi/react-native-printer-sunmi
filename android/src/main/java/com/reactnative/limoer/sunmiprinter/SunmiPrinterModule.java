@@ -218,7 +218,7 @@ public class SunmiPrinterModule extends ReactContextBaseJavaModule {
             @Override
             protected void onConnected(SunmiPrinterService service) {
                 sunmiPrinterService = service;
-                promise.resolve(null);
+                promise.resolve(true);
             }
 
             @Override

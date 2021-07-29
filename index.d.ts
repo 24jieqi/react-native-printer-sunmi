@@ -1,4 +1,4 @@
-declare module 'react-native-sunmi-printer' {
+declare module 'react-native-printer-sunmi' {
   // 按行打印内容相关配置
   interface IText {
     text: string
@@ -7,7 +7,7 @@ declare module 'react-native-sunmi-printer' {
     fontSize?: number
     bold?: boolean
   }
-  interface IContent {
+  export interface IRowContent {
     row: IText[] // 打印行文本
     fontSize?: number // 指定单行字体
     bold?: boolean
@@ -32,9 +32,9 @@ declare module 'react-native-sunmi-printer' {
   }
   export interface IConfig {
     printerStyle?: IPrinterStyle
-    content: IContent[]
+    content: IRowContent[]
   }
   export function openPrinter(config: IConfig): Promise<any>
-  export function connect(): Promise<any>
+  export function connect(): Promise<boolean>
   export function selfCheck(): Promise<any>
 }
