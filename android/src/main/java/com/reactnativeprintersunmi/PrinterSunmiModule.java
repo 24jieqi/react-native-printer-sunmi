@@ -1,18 +1,25 @@
 package com.reactnativeprintersunmi;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.os.RemoteException;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
+import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.module.annotations.ReactModule;
+import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.sunmi.peripheral.printer.InnerPrinterCallback;
 import com.sunmi.peripheral.printer.InnerPrinterException;
 import com.sunmi.peripheral.printer.InnerPrinterManager;
@@ -22,6 +29,10 @@ import com.sunmi.peripheral.printer.WoyouConsts;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
 
 @ReactModule(name = PrinterSunmiModule.NAME)
 public class PrinterSunmiModule extends ReactContextBaseJavaModule {
@@ -84,6 +95,10 @@ public class PrinterSunmiModule extends ReactContextBaseJavaModule {
   @TargetApi(Build.VERSION_CODES.N)
   private int[] toArray(Object[] arr) {
     return Arrays.stream(arr).mapToInt(e -> Integer.parseInt(e.toString())).toArray();
+  }
+
+  private void sendEvent(ReactContext ctx, String eventName) {
+    ctx.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(eventName, null);
   }
 
   @ReactMethod
@@ -168,28 +183,39 @@ public class PrinterSunmiModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void selfCheck(final Promise promise) throws RemoteException {
-    int code = sunmiPrinterService.updatePrinterState();
-    switch (code) {
-      case 3:
-        promise.reject(PrinterState.CONNECT_EXCEPTION.getCode(), PrinterState.CONNECT_EXCEPTION.getMsg());
-        break;
-      case 4:
-        promise.reject(PrinterState.OUT_OF_PAPER.getCode(), PrinterState.OUT_OF_PAPER.getMsg());
-        break;
-      case 5:
-        promise.reject(PrinterState.OVER_HEAT.getCode(), PrinterState.OVER_HEAT.getMsg());
-        break;
-      case 6:
-        promise.reject(PrinterState.LID_OPENED.getCode(), PrinterState.LID_OPENED.getMsg());
-        break;
-      case 505:
-        promise.reject(PrinterState.NO_PRINTER.getCode(), PrinterState.NO_PRINTER.getMsg());
-        break;
-      default:
-        promise.resolve(null);
-
+  public WritableMap getPrinterState() {
+    WritableMap result = Arguments.createMap();
+    try{
+      int code = sunmiPrinterService.updatePrinterState();
+      switch (code) {
+        case 3:
+          result.putString("state", PrinterState.CONNECT_EXCEPTION.getCode());
+          result.putString("desc", PrinterState.CONNECT_EXCEPTION.getMsg());
+          break;
+        case 4:
+          result.putString("state", PrinterState.OUT_OF_PAPER.getCode());
+          result.putString("desc", PrinterState.OUT_OF_PAPER.getMsg());
+          break;
+        case 5:
+          result.putString("state", PrinterState.OVER_HEAT.getCode());
+          result.putString("desc", PrinterState.OVER_HEAT.getMsg());
+          break;
+        case 6:
+          result.putString("state", PrinterState.LID_OPENED.getCode());
+          result.putString("desc", PrinterState.LID_OPENED.getMsg());
+          break;
+        case 505:
+          result.putString("state", PrinterState.NO_PRINTER.getCode());
+          result.putString("desc", PrinterState.NO_PRINTER.getMsg());
+          break;
+        default:
+          result.putString("state", String.valueOf(code));
+          result.putString("desc", "未知异常");
+      }
+    } catch (RemoteException e) {
+      e.printStackTrace();
     }
+    return result;
   }
 
   @ReactMethod
@@ -203,14 +229,27 @@ public class PrinterSunmiModule extends ReactContextBaseJavaModule {
 
       @Override
       protected void onDisconnected() {
-        promise.reject("CONNECT_FAILED", "connection failed!");
+        // 发送disconnect事件
+        sendEvent(reactContext, "onDisconnect");
       }
     };
     // 绑定服务
     try {
-      InnerPrinterManager.getInstance().bindService(reactContext, printerCallback);
+     boolean success = InnerPrinterManager.getInstance().bindService(reactContext, printerCallback);
+     if (!success) {
+       promise.reject("CONNECTING_FAILED", "can not find service or no permission to bind");
+     }
     } catch (Exception e){
-      promise.reject("CONNECT_FAILED", e.getMessage());
+      // no server or can not bind
+      promise.reject("CONNECTING_FAILED", e.getMessage());
     }
+  }
+  // 对外暴露当前打印机状态
+  @Override
+  public Map<String, Object> getConstants() {
+    final Map<String, Object> constants = new HashMap<>();
+    final String devicesName = Build.SERIAL.toUpperCase(Locale.ENGLISH);
+    constants.put("DEVICES_NAME", devicesName);
+    return constants;
   }
 }
