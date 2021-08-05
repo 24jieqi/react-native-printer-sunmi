@@ -1,18 +1,34 @@
 import * as React from 'react';
 
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import PrinterSunmi from 'react-native-printer-sunmi';
 
 export default function App() {
-  const [result, setResult] = React.useState<number | undefined>();
-
-  React.useEffect(() => {
-    PrinterSunmi.multiply(3, 7).then(setResult);
-  }, []);
-
+  function handlePress() {
+    PrinterSunmi.connect()
+      .then((success) => {
+        console.log('success', success);
+        PrinterSunmi.openPrinter({
+          content: [
+            {
+              row: [
+                {
+                  text: 'hello world',
+                },
+              ],
+            },
+          ],
+        });
+      })
+      .catch((err) => {
+        console.log('err', err);
+      });
+  }
   return (
     <View style={styles.container}>
-      <Text>Result: {result}</Text>
+      <TouchableOpacity onPress={handlePress}>
+        <Text>Print</Text>
+      </TouchableOpacity>
     </View>
   );
 }
