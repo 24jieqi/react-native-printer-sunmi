@@ -1,6 +1,6 @@
 {
   "name": "react-native-printer-sunmi",
-  "version": "0.1.0",
+  "version": "1.0.3",
   "description": "printer module for sunmi",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -36,13 +36,13 @@
     "ios",
     "android"
   ],
-  "repository": "https://github.com/Limoer96/react-native-printer-sunmi",
+  "repository": "https://github.com/hjfruit/react-native-printer-sunmi",
   "author": "limoer <myt19960503@outlook.com> (https://github.com/Limoer96)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Limoer96/react-native-printer-sunmi/issues"
+    "url": "https://github.com/hjfruit/react-native-printer-sunmi/issues"
   },
-  "homepage": "https://github.com/Limoer96/react-native-printer-sunmi#readme",
+  "homepage": "https://github.com/hjfruit/react-native-printer-sunmi#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
