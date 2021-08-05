@@ -1,15 +1,15 @@
-# react-native-sunmi-printer
+# react-native-printer-sunmi
 
 ## Getting started
 
-`$ yarn add react-native-sunmi-printer --save`
+`$ yarn add react-native-printer-sunmi --save`
 
 ## 使用方式
 
 > 使用基于行配置的打印方式，如果当前行只有一个单元格，则调用`service.printOriginalText`，否则调用表格打印`service.printColumnsString`，表格行打印模式下，字体大小和粗细只能设置到行。
 
 ```javascript
-import SunmiPrinter from 'react-native-sunmi-printer'
+import SunmiPrinter from 'react-native-printer-sunmi'
 
 SunmiPrinter.connect().then(() => {
   SunmiPrinter.openPrinter({
