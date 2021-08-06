@@ -1,7 +1,17 @@
 import * as React from 'react';
 
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  NativeEventEmitter,
+  NativeModules,
+} from 'react-native';
 import PrinterSunmi from 'react-native-printer-sunmi';
+
+console.log(PrinterSunmi.DEVICES_NAME);
+console.log(PrinterSunmi.SUPPORTED);
 
 export default function App() {
   function handlePress() {
@@ -24,6 +34,15 @@ export default function App() {
         console.log('err', err);
       });
   }
+  React.useEffect(() => {
+    const eventEmitter = new NativeEventEmitter(NativeModules.PrinterSunmi);
+    const event = eventEmitter.addListener('onDisconnect', () => {
+      console.log('打印机已断开连接！');
+    });
+    return () => {
+      event.remove();
+    };
+  }, []);
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={handlePress}>

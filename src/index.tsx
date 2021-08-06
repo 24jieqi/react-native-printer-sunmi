@@ -36,10 +36,17 @@ export interface IConfig {
   content: IRowContent[];
 }
 
+export interface PrinterState {
+  state: string;
+  desc: string;
+}
+
 type PrinterSunmiType = {
+  DEVICES_NAME: string;
+  SUPPORTED: boolean;
   connect: () => Promise<boolean>;
   openPrinter: (config: IConfig) => Promise<any>;
-  selfCheck: () => Promise<any>;
+  getPrinterState: () => PrinterState;
 };
 
 const { PrinterSunmi } = NativeModules;

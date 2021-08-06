@@ -1,13 +1,10 @@
 package com.reactnativeprintersunmi;
 
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.os.RemoteException;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
@@ -21,7 +18,6 @@ import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.module.annotations.ReactModule;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.sunmi.peripheral.printer.InnerPrinterCallback;
-import com.sunmi.peripheral.printer.InnerPrinterException;
 import com.sunmi.peripheral.printer.InnerPrinterManager;
 import com.sunmi.peripheral.printer.InnerResultCallback;
 import com.sunmi.peripheral.printer.SunmiPrinterService;
@@ -32,7 +28,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 
 @ReactModule(name = PrinterSunmiModule.NAME)
 public class PrinterSunmiModule extends ReactContextBaseJavaModule {
@@ -176,7 +171,7 @@ public class PrinterSunmiModule extends ReactContextBaseJavaModule {
         if (code == 0) {
           promise.resolve(s);
         } else {
-          promise.reject(s);
+          promise.reject("PRINT_ERROR", s);
         }
       }
     });
@@ -229,7 +224,7 @@ public class PrinterSunmiModule extends ReactContextBaseJavaModule {
 
       @Override
       protected void onDisconnected() {
-        // 发送disconnect事件
+        // 发送disconnect事件，可以做一些重连操作
         sendEvent(reactContext, "onDisconnect");
       }
     };
@@ -244,12 +239,17 @@ public class PrinterSunmiModule extends ReactContextBaseJavaModule {
       promise.reject("CONNECTING_FAILED", e.getMessage());
     }
   }
-  // 对外暴露当前打印机状态
+  // 对外暴露的常量
   @Override
   public Map<String, Object> getConstants() {
     final Map<String, Object> constants = new HashMap<>();
     final String devicesName = Build.SERIAL.toUpperCase(Locale.ENGLISH);
-    constants.put("DEVICES_NAME", devicesName);
+    boolean supported = false;
+    if (devicesName.startsWith("V2")) {
+      supported = true;
+    }
+    constants.put("DEVICES_NAME", devicesName); // 当前设备名
+    constants.put("SUPPORTED", supported); // 通过名称来检测是否支持打印功能（不准确）
     return constants;
   }
 }
