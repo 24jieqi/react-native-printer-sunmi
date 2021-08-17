@@ -106,6 +106,16 @@ public class PrinterSunmiModule extends ReactContextBaseJavaModule {
     sunmiPrinterService.enterPrinterBuffer(true);
     for (int i = 0; i < content.size(); i++) {
       ReadableMap rowConfig = content.getMap(i);
+      String data = rowConfig.hasKey("data") ? rowConfig.getString("data"): "";
+      if (!"".equals(data)) {
+        // 设置居中
+        sunmiPrinterService.setAlignment(1, null);
+        int modulesize = rowConfig.hasKey("modulesize") ? rowConfig.getInt("modulesize") : 8;
+        int errorlevel = rowConfig.hasKey("errorlevel") ? rowConfig.getInt("errorlevel") : 0;
+        // 打印二维码
+        sunmiPrinterService.printQRCode(data, modulesize, errorlevel, null);
+        continue;
+      }
       ReadableArray textRow = rowConfig.getArray("row");
       Integer fontSize = rowConfig.hasKey("fontSize") ? rowConfig.getInt("fontSize") : null;
       boolean bold = rowConfig.hasKey("bold") && rowConfig.getBoolean("bold");

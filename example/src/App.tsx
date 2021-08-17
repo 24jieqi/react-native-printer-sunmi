@@ -21,11 +21,9 @@ export default function App() {
         PrinterSunmi.openPrinter({
           content: [
             {
-              row: [
-                {
-                  text: 'hello world',
-                },
-              ],
+              data: '22',
+              modulesize: 4,
+              errorlevel: 1,
             },
           ],
         });

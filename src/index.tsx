@@ -8,6 +8,12 @@ interface IText {
   fontSize?: number;
   bold?: boolean;
 }
+
+interface IQRCodeRowContent {
+  data: string;
+  modulesize: 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16;
+  errorlevel: 0 | 1 | 2 | 3;
+}
 export interface IRowContent {
   row: IText[]; // 打印行文本
   fontSize?: number; // 指定单行字体
@@ -31,11 +37,12 @@ export interface IPrinterStyle {
   STRIKETHROUGH_STYLE?: any;
   TEXT_RIGHT_SPACING?: number;
 }
+
+type IRow = IRowContent | IQRCodeRowContent;
 export interface IConfig {
   printerStyle?: IPrinterStyle;
-  content: IRowContent[];
+  content: IRow[];
 }
-
 export interface PrinterState {
   state: string;
   desc: string;
