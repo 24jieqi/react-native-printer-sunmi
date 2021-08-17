@@ -13,6 +13,7 @@ interface IQRCodeRowContent {
   data: string;
   modulesize: 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16;
   errorlevel: 0 | 1 | 2 | 3;
+  wrap?: number;
 }
 export interface IRowContent {
   row: IText[]; // 打印行文本
@@ -38,7 +39,7 @@ export interface IPrinterStyle {
   TEXT_RIGHT_SPACING?: number;
 }
 
-type IRow = IRowContent | IQRCodeRowContent;
+export type IRow = IRowContent | IQRCodeRowContent;
 export interface IConfig {
   printerStyle?: IPrinterStyle;
   content: IRow[];

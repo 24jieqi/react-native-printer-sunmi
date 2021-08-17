@@ -106,6 +106,7 @@ public class PrinterSunmiModule extends ReactContextBaseJavaModule {
     sunmiPrinterService.enterPrinterBuffer(true);
     for (int i = 0; i < content.size(); i++) {
       ReadableMap rowConfig = content.getMap(i);
+      int wrap = rowConfig.hasKey("wrap") ? rowConfig.getInt("wrap") : 0; // 打印完一行后走纸行数
       String data = rowConfig.hasKey("data") ? rowConfig.getString("data"): "";
       if (!"".equals(data)) {
         // 设置居中
@@ -114,12 +115,15 @@ public class PrinterSunmiModule extends ReactContextBaseJavaModule {
         int errorlevel = rowConfig.hasKey("errorlevel") ? rowConfig.getInt("errorlevel") : 0;
         // 打印二维码
         sunmiPrinterService.printQRCode(data, modulesize, errorlevel, null);
+        // 换行
+        if (wrap != 0) {
+          sunmiPrinterService.lineWrap(wrap, null);
+        }
         continue;
       }
       ReadableArray textRow = rowConfig.getArray("row");
       Integer fontSize = rowConfig.hasKey("fontSize") ? rowConfig.getInt("fontSize") : null;
       boolean bold = rowConfig.hasKey("bold") && rowConfig.getBoolean("bold");
-      Integer wrap = rowConfig.hasKey("wrap") ? rowConfig.getInt("wrap") : null; // 打印完一行后走纸行数
       // 设置单行字体大小
       if (fontSize != null) {
         sunmiPrinterService.setFontSize(fontSize, null);
@@ -156,7 +160,7 @@ public class PrinterSunmiModule extends ReactContextBaseJavaModule {
         sunmiPrinterService.printColumnsString(textArr.toArray(new String[textArr.size()]), toArray(widthArr.toArray()), toArray(alignArr.toArray()), null);
       }
       // 走纸
-      if (wrap != null) {
+      if (wrap != 0) {
         sunmiPrinterService.lineWrap(wrap, null);
       }
     }
