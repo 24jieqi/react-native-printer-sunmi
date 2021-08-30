@@ -192,11 +192,16 @@ public class PrinterSunmiModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public WritableMap getPrinterState() {
+  public void getPrinterState(Promise promise) {
     WritableMap result = Arguments.createMap();
     try{
       int code = sunmiPrinterService.updatePrinterState();
+//      Log.i("ReactNative", code+"");
       switch (code) {
+        case 1:
+          result.putString("state", PrinterState.FINE.getCode());
+          result.putString("desc", PrinterState.FINE.getMsg());
+          break;
         case 3:
           result.putString("state", PrinterState.CONNECT_EXCEPTION.getCode());
           result.putString("desc", PrinterState.CONNECT_EXCEPTION.getMsg());
@@ -224,7 +229,7 @@ public class PrinterSunmiModule extends ReactContextBaseJavaModule {
     } catch (RemoteException e) {
       e.printStackTrace();
     }
-    return result;
+    promise.resolve(result);
   }
 
   @ReactMethod

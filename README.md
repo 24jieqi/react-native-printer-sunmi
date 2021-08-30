@@ -6,7 +6,7 @@
 
 ## 使用方式
 
-> 使用基于行配置的打印方式，如果当前行只有一个单元格，则调用`service.printOriginalText`，否则调用表格打印`service.printColumnsString`，表格行打印模式下，字体大小和粗细只能设置到行。
+> 使用基于行配置的打印方式，如果当前行只有一个单元格，则调用`service.printOriginalText`，否则调用表格打印`service.printColumnsString`，表格行打印模式下，字体大小和粗细只能设置到行；现已支持二维码打印。
 
 ```javascript
 import SunmiPrinter from 'react-native-printer-sunmi'
@@ -61,7 +61,7 @@ SunmiPrinter.connect().then(() => {
 
 #### `SunmiPrinter.connect() => Promise<boolean>` 连接服务
 
-#### `SunmiPrinter.getPrinterState() => PrinterState` 获取打印机当前状态
+#### `SunmiPrinter.getPrinterState() => Promise(PrinterState)` 获取打印机当前状态
 
 #### `SunmiPrinter.openPrinter(options: IOption) => Promise` 开始打印（事务的方式）
 

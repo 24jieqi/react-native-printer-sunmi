@@ -14,23 +14,37 @@ console.log(PrinterSunmi.DEVICES_NAME);
 console.log(PrinterSunmi.SUPPORTED);
 
 export default function App() {
-  function handlePress() {
-    PrinterSunmi.connect()
-      .then((success) => {
-        console.log('success', success);
-        PrinterSunmi.openPrinter({
-          content: [
-            {
-              data: '22',
-              modulesize: 4,
-              errorlevel: 1,
-            },
-          ],
-        });
-      })
-      .catch((err) => {
-        console.log('err', err);
+  async function handlePress() {
+    try {
+      const success = await PrinterSunmi.connect();
+      if (!success) {
+        return;
+      }
+      const state = await PrinterSunmi.getPrinterState();
+      console.log(state.state, state.desc);
+      PrinterSunmi.openPrinter({
+        content: [
+          {
+            row: [
+              {
+                text: 'something to print',
+                align: 0,
+                fontSize: 20,
+                bold: true,
+              },
+            ],
+            wrap: 1,
+          },
+          {
+            data: '22',
+            modulesize: 4,
+            errorlevel: 1,
+          },
+        ],
       });
+    } catch (error) {
+      console.log('err', error);
+    }
   }
   React.useEffect(() => {
     const eventEmitter = new NativeEventEmitter(NativeModules.PrinterSunmi);

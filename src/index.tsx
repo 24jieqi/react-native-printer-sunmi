@@ -54,7 +54,7 @@ type PrinterSunmiType = {
   SUPPORTED: boolean;
   connect: () => Promise<boolean>;
   openPrinter: (config: IConfig) => Promise<any>;
-  getPrinterState: () => PrinterState;
+  getPrinterState: () => Promise<PrinterState>;
 };
 
 const { PrinterSunmi } = NativeModules;
