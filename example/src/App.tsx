@@ -22,26 +22,29 @@ export default function App() {
       }
       const state = await PrinterSunmi.getPrinterState();
       console.log(state.state, state.desc);
-      PrinterSunmi.openPrinter({
-        content: [
-          {
-            row: [
-              {
-                text: 'something to print',
-                align: 0,
-                fontSize: 20,
-                bold: true,
-              },
-            ],
-            wrap: 1,
-          },
-          {
-            data: '22',
-            modulesize: 4,
-            errorlevel: 1,
-          },
-        ],
-      });
+      PrinterSunmi.openPrinter(
+        {
+          content: [
+            {
+              row: [
+                {
+                  text: 'something to print',
+                  align: 0,
+                  fontSize: 20,
+                  bold: true,
+                },
+              ],
+              wrap: 1,
+            },
+            {
+              data: '22',
+              modulesize: 4,
+              errorlevel: 1,
+            },
+          ],
+        },
+        2
+      );
     } catch (error) {
       console.log('err', error);
     }

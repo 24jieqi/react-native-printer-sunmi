@@ -95,15 +95,30 @@ public class PrinterSunmiModule extends ReactContextBaseJavaModule {
   private void sendEvent(ReactContext ctx, String eventName) {
     ctx.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(eventName, null);
   }
-
   @ReactMethod
-  public void openPrinter(final ReadableMap options, final Promise promise) throws RemoteException {
+  public void openPrinter(final ReadableMap options, final int mode, final Promise promise) throws RemoteException {
+    int currentMode = sunmiPrinterService.getPrinterMode();
+    if ( mode != currentMode) {
+      promise.reject("MODE_ERROR", "打印模式不支持，打印机当前模式：" + PrinterMode.getDescByCode(currentMode));
+    } else {
+      boolean buffer = true;
+      if (mode == 2) {
+        buffer = false;
+      }
+      this.printWithOptions(options,mode, buffer, promise);
+    }
+  }
+  public void printWithOptions(final ReadableMap options, int mode, final boolean buffer, final Promise promise) throws RemoteException {
     ReadableArray content = options.hasKey("content") ? options.getArray("content") : null;
-    ReadableMap printerStyle = options.hasKey("printerStyle") ? options.getMap("printerStyle") : null;
-    // 设置全局打印机样式
-//        setGlobalPrinterStyle(printerStyle);
-    // 开始事务
-    sunmiPrinterService.enterPrinterBuffer(true);
+    // 标签模式下先进行标签定位
+    if (mode == 2) {
+      sunmiPrinterService.labelLocate();
+    }
+    // 按需开启事务
+    if (buffer) {
+      // 开始事务
+      sunmiPrinterService.enterPrinterBuffer(true);
+    }
     for (int i = 0; i < content.size(); i++) {
       ReadableMap rowConfig = content.getMap(i);
       int wrap = rowConfig.hasKey("wrap") ? rowConfig.getInt("wrap") : 0; // 打印完一行后走纸行数
@@ -164,31 +179,38 @@ public class PrinterSunmiModule extends ReactContextBaseJavaModule {
         sunmiPrinterService.lineWrap(wrap, null);
       }
     }
-    sunmiPrinterService.commitPrinterBufferWithCallback(new InnerResultCallback() {
-      @Override
-      public void onRunResult(boolean b) throws RemoteException {
+    if (mode == 2) {
+      sunmiPrinterService.labelOutput();
+    }
+    if (buffer) {
+      sunmiPrinterService.commitPrinterBufferWithCallback(new InnerResultCallback() {
+        @Override
+        public void onRunResult(boolean b) throws RemoteException {
 
-      }
-
-      @Override
-      public void onReturnString(String s) throws RemoteException {
-
-      }
-
-      @Override
-      public void onRaiseException(int i, String s) throws RemoteException {
-
-      }
-
-      @Override
-      public void onPrintResult(int code, String s) throws RemoteException {
-        if (code == 0) {
-          promise.resolve(s);
-        } else {
-          promise.reject("PRINT_ERROR", s);
         }
-      }
-    });
+
+        @Override
+        public void onReturnString(String s) throws RemoteException {
+
+        }
+
+        @Override
+        public void onRaiseException(int i, String s) throws RemoteException {
+
+        }
+
+        @Override
+        public void onPrintResult(int code, String s) throws RemoteException {
+          if (code == 0) {
+            promise.resolve(s);
+          } else {
+            promise.reject("PRINT_ERROR", s);
+          }
+        }
+      });
+    } else {
+      promise.resolve("打印完成");
+    }
   }
 
   @ReactMethod

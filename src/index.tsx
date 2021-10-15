@@ -9,6 +9,7 @@ interface IText {
   bold?: boolean;
 }
 
+export type PrinterMode = 0 | 1 | 2;
 interface IQRCodeRowContent {
   data: string;
   modulesize: 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16;
@@ -53,10 +54,12 @@ type PrinterSunmiType = {
   DEVICES_NAME: string;
   SUPPORTED: boolean;
   connect: () => Promise<boolean>;
-  openPrinter: (config: IConfig) => Promise<any>;
+  openPrinter: (config: IConfig, mode: PrinterMode) => Promise<any>;
   getPrinterState: () => Promise<PrinterState>;
+  openLabelPrinter: () => Promise<any>;
+  openLabelPrinterBuffer: () => Promise<any>;
 };
 
-const { PrinterSunmi } = NativeModules;
+const { PrinterSunmi } = NativeModules as { PrinterSunmi: PrinterSunmiType };
 
-export default PrinterSunmi as PrinterSunmiType;
+export default PrinterSunmi;

@@ -1,24 +1,22 @@
 # react-native-printer-sunmi
 
-## Getting started
+## 特性
+
+1. 基于行配置的打印方式，如果当前行只有一个单元格，内部调用`service.printOriginalText`，否则内部调用表格打印`service.printColumnsString`
+2. 支持二维码打印，具体配置见示例
+3. 支持标签打印
+
+## 安装
 
 `$ yarn add react-native-printer-sunmi --save`
 
 ## 使用方式
 
-> 使用基于行配置的打印方式，如果当前行只有一个单元格，则调用`service.printOriginalText`，否则调用表格打印`service.printColumnsString`，表格行打印模式下，字体大小和粗细只能设置到行；现已支持二维码打印。
-
 ```javascript
 import SunmiPrinter from 'react-native-printer-sunmi'
-
-SunmiPrinter.connect().then(() => {
-  SunmiPrinter.openPrinter({
-    printerStyle: {
-      // LEFT_SPACING: 50,
-      // TEXT_RIGHT_SPACING: 50,
-    },
+const content = {
     content: [
-      // single text
+      // 单个文本
       {
         row: [
           {
@@ -30,13 +28,14 @@ SunmiPrinter.connect().then(() => {
         ]
         wrap: 1
       },
+      // 表格打印
       {
         row: [
           {
             text: '1',
             align: 0,
             width: 1
-          }
+          },
           {
             text: '2',
             align: 1,
@@ -46,10 +45,22 @@ SunmiPrinter.connect().then(() => {
         fontSize: 14,
         bold: false,
         wrap: 4
-      }
+      },
+      // 二维码打印
+      {
+        data: `HJ_${options.orderId}`,
+        modulesize: 9,
+        errorlevel: 1,
+        wrap: 1,
+      },
     ]
-  })
-})
+  }
+async function print() {
+  try{
+    await SunmiPrinter.connect()
+    await SunmiPrinter.openPrinter(content, 0)
+  } catch() {}
+}
 ```
 
 ### 常量
@@ -63,7 +74,10 @@ SunmiPrinter.connect().then(() => {
 
 #### `SunmiPrinter.getPrinterState() => Promise(PrinterState)` 获取打印机当前状态
 
-#### `SunmiPrinter.openPrinter(options: IOption) => Promise` 开始打印（事务的方式）
+#### `SunmiPrinter.openPrinter(options: IOption, mode: 0 | 1 | 2) => Promise` 开始打印（事务的方式）
+
+> tips：`mode`传入打印模式，`0`正常模式 `1`黑标模式（暂不支持）`2`标签模式
+> 使用标签模式之前，需要装入标签纸，并在"设置"=>"内置打印"修改打印模式为`标签热敏`并点击标签学习后方可正常使用
 
 ### 事件
 
