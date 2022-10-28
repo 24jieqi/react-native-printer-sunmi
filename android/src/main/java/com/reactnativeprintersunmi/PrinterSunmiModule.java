@@ -18,6 +18,7 @@ import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.module.annotations.ReactModule;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.sunmi.peripheral.printer.InnerPrinterCallback;
+import com.sunmi.peripheral.printer.InnerPrinterException;
 import com.sunmi.peripheral.printer.InnerPrinterManager;
 import com.sunmi.peripheral.printer.InnerResultCallback;
 import com.sunmi.peripheral.printer.SunmiPrinterService;
@@ -101,10 +102,7 @@ public class PrinterSunmiModule extends ReactContextBaseJavaModule {
     if ( mode != currentMode) {
       promise.reject("MODE_ERROR", "打印模式不支持，打印机当前模式：" + PrinterMode.getDescByCode(currentMode));
     } else {
-      boolean buffer = true;
-      if (mode == 2) {
-        buffer = false;
-      }
+      boolean buffer = mode != 2;
       this.printWithOptions(options,mode, buffer, promise);
     }
   }
@@ -260,17 +258,23 @@ public class PrinterSunmiModule extends ReactContextBaseJavaModule {
       @Override
       protected void onConnected(SunmiPrinterService service) {
         sunmiPrinterService = service;
+        sendEvent(reactContext, "onConnected");
         promise.resolve(true);
       }
 
       @Override
       protected void onDisconnected() {
         // 发送disconnect事件，可以做一些重连操作
-        sendEvent(reactContext, "onDisconnect");
+        sendEvent(reactContext, "onDisconnected");
       }
     };
     // 绑定服务
     try {
+      // 如果已经连接，则不会再次尝试连接
+      boolean isConnected = InnerPrinterManager.getInstance().hasPrinter(sunmiPrinterService);
+      if (isConnected) {
+        promise.resolve(true);
+      }
      boolean success = InnerPrinterManager.getInstance().bindService(reactContext, printerCallback);
      if (!success) {
        promise.reject("CONNECTING_FAILED", "can not find service or no permission to bind");
@@ -280,15 +284,38 @@ public class PrinterSunmiModule extends ReactContextBaseJavaModule {
       promise.reject("CONNECTING_FAILED", e.getMessage());
     }
   }
+  @ReactMethod
+  public void disconnect(Promise promise) {
+    try {
+      InnerPrinterManager.getInstance().unBindService(reactContext, new InnerPrinterCallback() {
+        @Override
+        protected void onConnected(SunmiPrinterService service) {
+
+        }
+
+        @Override
+        protected void onDisconnected() {
+          promise.resolve(true);
+        }
+      });
+    } catch (Exception ignored) {
+      promise.reject("DISCONNECT_FAILED", "断开服务失败！");
+    }
+  }
+  @ReactMethod
+  public boolean hasPrinter() {
+    try {
+      return InnerPrinterManager.getInstance().hasPrinter(sunmiPrinterService);
+    } catch (InnerPrinterException e) {
+      return  false;
+    }
+  }
   // 对外暴露的常量
   @Override
   public Map<String, Object> getConstants() {
     final Map<String, Object> constants = new HashMap<>();
     final String devicesName = Build.SERIAL.toUpperCase(Locale.ENGLISH);
-    boolean supported = false;
-    if (devicesName.startsWith("V2")) {
-      supported = true;
-    }
+    boolean supported = devicesName.startsWith("V2");
     constants.put("DEVICES_NAME", devicesName); // 当前设备名
     constants.put("SUPPORTED", supported); // 通过名称来检测是否支持打印功能（不准确）
     return constants;

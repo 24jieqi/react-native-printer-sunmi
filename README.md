@@ -59,6 +59,8 @@ async function print() {
   try{
     await SunmiPrinter.connect()
     await SunmiPrinter.openPrinter(content, 0)
+    await SunmiPrinter.disconnect()
+    console.log('打印完成！')
   } catch() {}
 }
 ```
@@ -79,9 +81,13 @@ async function print() {
 > tips：`mode`传入打印模式，`0`正常模式 `1`黑标模式（暂不支持）`2`标签模式
 > 使用标签模式之前，需要装入标签纸，并在"设置"=>"内置打印"修改打印模式为`标签热敏`并点击标签学习后方可正常使用
 
+#### `SunmiPrinter.disconnect() => Promise<boolean>` 服务断开连接
+
+#### `SunmiPrinter.hasPrinter() => boolean` 检测是否已经连接服务
+
 ### 事件
 
-- `onDisconnect` 打印机断开连接后触发事件
+- `onDisconnect` 打印机断开连接后触发事件（手动断开也会触发）
 
 ```js
 React.useEffect(() => {

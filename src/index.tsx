@@ -1,7 +1,7 @@
 import { NativeModules } from 'react-native';
 
 // 按行打印内容相关配置
-interface IText {
+interface IPrinterText {
   text: string;
   width?: number;
   align?: 0 | 1 | 2;
@@ -10,14 +10,14 @@ interface IText {
 }
 
 export type PrinterMode = 0 | 1 | 2;
-interface IQRCodeRowContent {
+interface IPrinterQRCodeRowContent {
   data: string;
   modulesize: 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16;
   errorlevel: 0 | 1 | 2 | 3;
   wrap?: number;
 }
-export interface IRowContent {
-  row: IText[]; // 打印行文本
+export interface IPrinterRowContent {
+  row: IPrinterText[]; // 打印行文本
   fontSize?: number; // 指定单行字体
   bold?: boolean;
   wrap?: number; // 本行打印完后换行数
@@ -40,10 +40,10 @@ export interface IPrinterStyle {
   TEXT_RIGHT_SPACING?: number;
 }
 
-export type IRow = IRowContent | IQRCodeRowContent;
-export interface IConfig {
+export type IPrinterRow = IPrinterRowContent | IPrinterQRCodeRowContent;
+export interface IPrinterConfig {
   printerStyle?: IPrinterStyle;
-  content: IRow[];
+  content: IPrinterRow[];
 }
 export interface PrinterState {
   state: string;
@@ -54,10 +54,10 @@ type PrinterSunmiType = {
   DEVICES_NAME: string;
   SUPPORTED: boolean;
   connect: () => Promise<boolean>;
-  openPrinter: (config: IConfig, mode: PrinterMode) => Promise<any>;
+  openPrinter: (config: IPrinterConfig, mode: PrinterMode) => Promise<any>;
   getPrinterState: () => Promise<PrinterState>;
-  openLabelPrinter: () => Promise<any>;
-  openLabelPrinterBuffer: () => Promise<any>;
+  disconnect: () => Promise<boolean>;
+  hasPrinter: () => boolean;
 };
 
 const { PrinterSunmi } = NativeModules as { PrinterSunmi: PrinterSunmiType };

@@ -16,13 +16,14 @@ console.log(PrinterSunmi.SUPPORTED);
 export default function App() {
   async function handlePress() {
     try {
+      // connect service if not connected
       const success = await PrinterSunmi.connect();
       if (!success) {
         return;
       }
       const state = await PrinterSunmi.getPrinterState();
       console.log(state.state, state.desc);
-      PrinterSunmi.openPrinter(
+      await PrinterSunmi.openPrinter(
         {
           content: [
             {
@@ -45,6 +46,7 @@ export default function App() {
         },
         2
       );
+      PrinterSunmi.disconnect();
     } catch (error) {
       console.log('err', error);
     }
