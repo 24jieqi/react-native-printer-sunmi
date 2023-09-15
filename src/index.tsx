@@ -1,65 +1,90 @@
-import { NativeModules } from 'react-native';
+import {
+  Image,
+  type ImageSourcePropType,
+  NativeEventEmitter,
+  NativeModules,
+  Platform,
+} from 'react-native';
+import type { PrintErrorMessage, PrinterSunmiType } from './typing';
 
-// 按行打印内容相关配置
-interface IPrinterText {
-  text: string;
-  width?: number;
-  align?: 0 | 1 | 2;
-  fontSize?: number;
-  bold?: boolean;
-}
+const LINKING_ERROR =
+  `The package 'react-native-printer-sunmi' doesn't seem to be linked. Make sure: \n\n` +
+  Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
+  '- You rebuilt the app after installing the package\n' +
+  '- You are not using Expo Go\n';
 
-export type PrinterMode = 0 | 1 | 2;
-interface IPrinterQRCodeRowContent {
-  data: string;
-  modulesize: 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16;
-  errorlevel: 0 | 1 | 2 | 3;
-  wrap?: number;
-}
-export interface IPrinterRowContent {
-  row: IPrinterText[]; // 打印行文本
-  fontSize?: number; // 指定单行字体
-  bold?: boolean;
-  wrap?: number; // 本行打印完后换行数
-}
-// 打印机相关配置
-export interface IPrinterStyle {
-  INVERT?: boolean;
-  ANTI_WHITE?: boolean;
-  BOLD?: Boolean;
-  DOUBLE_HEIGHT?: boolean;
-  DOUBLE_WIDTH?: boolean;
-  ILALIC?: boolean;
-  STRIKETHROUGH?: boolean;
-  UNDERLINE?: boolean;
-  ABSOLUATE_POSITION?: number;
-  LEFT_SPACING?: number;
-  LINE_SPACING?: number;
-  RELATIVE_POSITION?: number;
-  STRIKETHROUGH_STYLE?: any;
-  TEXT_RIGHT_SPACING?: number;
-}
+const PrinterSunmi = NativeModules.PrinterSunmi
+  ? NativeModules.PrinterSunmi
+  : new Proxy(
+      {},
+      {
+        get() {
+          throw new Error(LINKING_ERROR);
+        },
+      }
+    );
 
-export type IPrinterRow = IPrinterRowContent | IPrinterQRCodeRowContent;
-export interface IPrinterConfig {
-  printerStyle?: IPrinterStyle;
-  content: IPrinterRow[];
-}
-export interface PrinterState {
-  state: string;
-  desc: string;
-}
-
-type PrinterSunmiType = {
-  DEVICES_NAME: string;
-  SUPPORTED: boolean;
-  connect: () => Promise<boolean>;
-  openPrinter: (config: IPrinterConfig, mode: PrinterMode) => Promise<any>;
-  getPrinterState: () => Promise<PrinterState>;
-  disconnect: () => Promise<boolean>;
-  hasPrinter: () => boolean;
+const PrinterAPIs: PrinterSunmiType = {
+  connect: PrinterSunmi.connect,
+  disconnect: PrinterSunmi.disconnect,
+  getInfo: PrinterSunmi.getInfo,
+  DEVICES_NAME: PrinterSunmi.DEVICES_NAME,
+  initLine: (option = {}) => {
+    PrinterSunmi.initLine(option);
+  },
+  addText(text, option = {}) {
+    PrinterSunmi.addText(text, option);
+  },
+  printText(text, option = {}) {
+    PrinterSunmi.printText(text, option);
+  },
+  printTexts: PrinterSunmi.printTexts,
+  printBarCode(code, option = {}) {
+    PrinterSunmi.printBarCode(code, option);
+  },
+  printQrCode(code, option = {}) {
+    PrinterSunmi.printQrCode(code, option);
+  },
+  printBitmap(uri, option = {}) {
+    const path = Image.resolveAssetSource(uri as ImageSourcePropType);
+    PrinterSunmi.printBitmap({ ...option, url: path?.uri || uri });
+  },
+  printDividingLine: PrinterSunmi.printDividingLine,
+  autoOut: PrinterSunmi.autoOut,
+  enableTransMode: PrinterSunmi.enableTransMode,
+  printTrans: PrinterSunmi.printTrans,
+  initCanvas: PrinterSunmi.initCanvas,
+  renderText(text, option = {}) {
+    PrinterSunmi.renderText(text, option);
+  },
+  renderBarCode(code, option = {}) {
+    PrinterSunmi.renderBarCode(code, option);
+  },
+  renderQrCode(text, option = {}) {
+    PrinterSunmi.renderQrCode(text, option);
+  },
+  renderBitmap(uri, option) {
+    const path = Image.resolveAssetSource(uri as ImageSourcePropType);
+    const imageObj = typeof path === 'string' ? { url: uri } : { path };
+    PrinterSunmi.renderBitmap({ ...option, ...imageObj });
+  },
+  renderArea(option = {}) {
+    PrinterSunmi.renderArea(option);
+  },
+  printCanvas: PrinterSunmi.printCanvas,
+  printFile: PrinterSunmi.printFile,
+  watchError(errorHandler) {
+    const eventEmitter = new NativeEventEmitter(NativeModules.PrinterSunmi);
+    const errorEvent = eventEmitter.addListener(
+      'PRINT_ERROR',
+      (payload: PrintErrorMessage) => {
+        errorHandler(payload);
+      }
+    );
+    return () => {
+      errorEvent.remove();
+    };
+  },
 };
 
-const { PrinterSunmi } = NativeModules as { PrinterSunmi: PrinterSunmiType };
-
-export default PrinterSunmi;
+export default PrinterAPIs;

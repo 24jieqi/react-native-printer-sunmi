@@ -73,9 +73,9 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.demoexample"
+    namespace "com.printersunmiexample"
     defaultConfig {
-        applicationId "com.demoexample"
+        applicationId "com.printersunmiexample"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
