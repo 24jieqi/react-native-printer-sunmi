@@ -1,4 +1,4 @@
-# react-native-printer-sunmi`v2`
+# react-native-printer-sunmi `v2`
 
 > 基于商米新版`Printx` SDK 实现的打印原生模块
 
@@ -55,11 +55,11 @@ async function print() {
 
 ### 接下来
 
-- [] 打印文件接口
-- [] 指令集打印
-- [] 钱箱控制
-- [] LCD 客显控制接口
-- [] 配置式 API
+- [ ] 打印文件接口
+- [ ] 指令集打印
+- [ ] 钱箱控制
+- [ ] LCD 客显控制接口
+- [ ] 配置式 API
 
 ## License
 
