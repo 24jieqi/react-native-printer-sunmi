@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-import { StyleSheet, View, Text } from 'react-native';
-import { Button, Space } from '@fruits-chain/react-native-xiaoshu';
+import { ScrollView } from 'react-native';
+import { Button, Card, Cell, Space } from '@fruits-chain/react-native-xiaoshu';
 import PrinterSunmi from 'react-native-printer-sunmi';
 
 export default function App() {
@@ -65,28 +65,112 @@ export default function App() {
     });
     PrinterSunmi.printTrans();
   }
+  async function handleRenderText() {
+    PrinterSunmi.initCanvas({ width: 320, height: 200 });
+    PrinterSunmi.renderArea({
+      style: 'BOX',
+      posX: 0,
+      posY: 0,
+      width: 320,
+      height: 198,
+    });
+    PrinterSunmi.renderText('打印标题', {
+      textSize: 32,
+      bold: true,
+      posX: 10,
+      posY: 24,
+    });
+    PrinterSunmi.printCanvas(1);
+  }
+  function handleRenderBarCode() {
+    PrinterSunmi.initCanvas({ width: 320, height: 200 });
+    PrinterSunmi.renderBarCode('ABC-abc-1234', {
+      align: 'CENTER',
+    });
+    PrinterSunmi.printCanvas(1);
+  }
+  function handleRenderQrCode() {
+    PrinterSunmi.initCanvas({ width: 300, height: 200 });
+    PrinterSunmi.renderQrCode('123', {
+      dot: 12,
+    });
+    PrinterSunmi.printCanvas(1);
+  }
+  function handleRenderBitmap() {
+    PrinterSunmi.initCanvas({ width: 300, height: 200 });
+    PrinterSunmi.renderBitmap(require('./image.png'), {
+      width: 300,
+      height: 200,
+    });
+    PrinterSunmi.printCanvas(1);
+  }
+  function handleRenderArea() {
+    PrinterSunmi.initCanvas({ width: 300, height: 200 });
+    PrinterSunmi.renderArea({
+      style: 'RECT_FILL',
+      posX: 20,
+      posY: 20,
+      width: 50,
+      height: 50,
+    });
+    PrinterSunmi.printCanvas(1);
+  }
+  function handleRenderLabel() {
+    PrinterSunmi.initCanvas({ width: 330, height: 240 });
+    PrinterSunmi.renderArea({
+      style: 'BOX',
+      posX: 0,
+      posY: 0,
+      width: 330,
+      height: 240,
+    });
+    PrinterSunmi.renderText('这是标题', {
+      posX: 165,
+      posY: 5,
+    });
+    PrinterSunmi.renderQrCode('1234', {
+      posX: 5,
+      posY: 30,
+      width: 130,
+      height: 130,
+    });
+    PrinterSunmi.renderText('这是商品描述，多行的商品描述', {
+      posX: 140,
+      posY: 30,
+      width: 180,
+      height: 120,
+    });
+    PrinterSunmi.renderBarCode('ABC-abc-1234', {
+      posX: 15,
+      posY: 180,
+      width: 300,
+      height: 130,
+    });
+    PrinterSunmi.printCanvas(1);
+  }
   return (
-    <View style={styles.container}>
-      <Text>初始化状态: {result ? '成功' : '失败'}</Text>
-      <Space>
-        <Button onPress={handlePrintTexts}>打印文本</Button>
-        <Button onPress={handlePrintBarCode}>打印条形码</Button>
-        <Button onPress={handlePrintQrCode}>打印二维码</Button>
-        <Button onPress={handlePrintBitmap}>打印图片</Button>
+    <ScrollView>
+      <Space direction="vertical">
+        <Cell title="初始化状态" value={result ? '成功' : '失败'} />
+        <Card title="热敏打印">
+          <Space>
+            <Button onPress={handlePrintTexts}>打印文本</Button>
+            <Button onPress={handlePrintBarCode}>打印条形码</Button>
+            <Button onPress={handlePrintQrCode}>打印二维码</Button>
+            <Button onPress={handlePrintBitmap}>打印图片</Button>
+          </Space>
+        </Card>
+        <Card title="标签打印">
+          <Space>
+            <Button onPress={handleRenderText}>绘制文本</Button>
+            <Button onPress={handleRenderBarCode}>绘制条形码</Button>
+            <Button onPress={handleRenderQrCode}>绘制二维码</Button>
+            <Button onPress={handleRenderBitmap}>绘制图片</Button>
+            <Button onPress={handleRenderArea}>绘制特殊图形</Button>
+            <Button onPress={handleRenderLabel}>综合示例</Button>
+          </Space>
+        </Card>
       </Space>
-    </View>
+    </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  box: {
-    width: 60,
-    height: 60,
-    marginVertical: 20,
-  },
-});
