@@ -1,104 +1,68 @@
-# react-native-printer-sunmi
+# react-native-printer-sunmi `v2`
 
-## 特性
+> 基于商米新版`Printx` SDK 实现的打印原生模块
 
-1. 基于行配置的打印方式，如果当前行只有一个单元格，内部调用`service.printOriginalText`，否则内部调用表格打印`service.printColumnsString`
-2. 支持二维码打印，具体配置见示例
-3. 支持标签打印
+### v1.x 基于旧版 SDK 的实现仍然可用，使用方式见[文档](./README.old.md)
 
 ## 安装
 
-`$ yarn add react-native-printer-sunmi --save`
+```sh
+npm install react-native-printer-sunmi
+```
 
-## 使用方式
+## Usage
 
-```javascript
-import SunmiPrinter from 'react-native-printer-sunmi'
-const content = {
-    content: [
-      // 单个文本
-      {
-        row: [
-          {
-            text: 'something to print',
-            align: 0,
-            fontSize: 20,
-            bold: true
-          },
-        ]
-        wrap: 1
-      },
-      // 表格打印
-      {
-        row: [
-          {
-            text: '1',
-            align: 0,
-            width: 1
-          },
-          {
-            text: '2',
-            align: 1,
-            width: 1
-          }
-        ],
-        fontSize: 14,
-        bold: false,
-        wrap: 4
-      },
-      // 二维码打印
-      {
-        data: `HJ_${options.orderId}`,
-        modulesize: 9,
-        errorlevel: 1,
-        wrap: 1,
-      },
-    ]
-  }
+```js
+import PinterSunmi from 'react-native-printer-sunmi';
+
+// ...
 async function print() {
-  try{
-    await SunmiPrinter.connect()
-    await SunmiPrinter.openPrinter(content, 0)
-    await SunmiPrinter.disconnect()
-    console.log('打印完成！')
-  } catch() {}
+  await PrinterSunmi.connect();
+  PrinterSunmi.enableTransMode(true);
+  PrinterSunmi.initLine({ align: 'CENTER' });
+  PrinterSunmi.printText('测试小票打印', { textSize: 32, bold: true });
+  PrinterSunmi.addText('购物列表\n', { bold: true });
+  PrinterSunmi.initLine();
+  PrinterSunmi.addText('小计：3件\n');
+  PrinterSunmi.printTexts([
+    { text: '商品', span: 2 },
+    { text: '价格', span: 1, align: 'RIGHT' },
+    { text: '数量', span: 1, align: 'RIGHT' },
+  ]);
+  PrinterSunmi.printTexts([
+    { text: '鲜榴莲', span: 2 },
+    { text: '22', span: 1, align: 'RIGHT' },
+    { text: 'X3', span: 1, align: 'RIGHT' },
+  ]);
+  PrinterSunmi.printDividingLine('EMPTY', 24);
+  PrinterSunmi.printDividingLine('SOLID', 2);
+  PrinterSunmi.printDividingLine('EMPTY', 24);
+  PrinterSunmi.printTrans();
 }
 ```
 
-### 常量
+## API
 
-- `PrinterSunmi.DEVICES_NAME`设备标识
-- `PrinterSunmi.SUPPORTED` 是否支持打印
+### SunmiPrinter.connect() => Promise<boolean> 连接/获取打印机
 
-### API
+### SunmiPrinter.disconnect: () => void 断开连接/释放 SDK
 
-#### `SunmiPrinter.connect() => Promise<boolean>` 连接服务
+### SunmiPrinter.watchError(errorHandler: (payload: PrintErrorMessage) => void) => () => void 异常监听
 
-#### `SunmiPrinter.getPrinterState() => Promise(PrinterState)` 获取打印机当前状态
+### PrinterSunmi.getInfo: () => PrinterInfo 获取打印机信息
 
-#### `SunmiPrinter.openPrinter(options: IOption, mode: 0 | 1 | 2) => Promise` 开始打印（事务的方式）
+> 其余用作打印的`API`同[商米内置打印机服务文档](https://developer.sunmi.com/docs/zh-CN/xeghjk491/maceghjk502)，更多示例见[example](./example/src/App.tsx)
 
-> tips：`mode`传入打印模式，`0`正常模式 `1`黑标模式（暂不支持）`2`标签模式
-> 使用标签模式之前，需要装入标签纸，并在"设置"=>"内置打印"修改打印模式为`标签热敏`并点击标签学习后方可正常使用
+### 接下来
 
-#### `SunmiPrinter.disconnect() => Promise<boolean>` 服务断开连接
+- [ ] 打印文件接口
+- [ ] 指令集打印
+- [ ] 钱箱控制
+- [ ] LCD 客显控制接口
+- [ ] 配置式 API
 
-#### `SunmiPrinter.hasPrinter() => boolean` 检测是否已经连接服务
+## License
 
-### 事件
+MIT
 
-- `onDisconnect` 打印机断开连接后触发事件（手动断开也会触发）
-
-```js
-React.useEffect(() => {
-  const eventEmitter = new NativeEventEmitter(NativeModules.PrinterSunmi);
-  const event = eventEmitter.addListener('onDisconnect', () => {
-    console.log('打印机已断开连接！');
-  });
-  return () => {
-    event.remove();
-  };
-}, []);
-```
-
-> 更多使用方式见 [example](https://github.com/hjfruit/react-native-printer-sunmi/tree/main/example)
+---
