@@ -16,6 +16,7 @@ export default function App() {
     });
     return () => {
       close();
+      PrinterSunmi.disconnect();
     };
   }, []);
   function handlePrintTexts() {
