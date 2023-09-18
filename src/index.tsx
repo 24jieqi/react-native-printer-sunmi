@@ -65,8 +65,7 @@ const PrinterAPIs: PrinterSunmiType = {
   },
   renderBitmap(uri, option) {
     const path = Image.resolveAssetSource(uri as ImageSourcePropType);
-    const imageObj = typeof path === 'string' ? { url: uri } : { path };
-    PrinterSunmi.renderBitmap({ ...option, ...imageObj });
+    PrinterSunmi.renderBitmap({ ...option, url: path?.uri || uri });
   },
   renderArea(option = {}) {
     PrinterSunmi.renderArea(option);

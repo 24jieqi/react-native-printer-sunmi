@@ -37,7 +37,7 @@ public class Utils {
       style.setPosX(option.getInt("posX"));
     }
     if (option.hasKey("posY")) {
-      style.setPosX(option.getInt("posY"));
+      style.setPosY(option.getInt("posY"));
     }
     if (option.hasKey("renderColor")) {
       style.setRenderColor(RenderColor.valueOf(option.getString("renderColor")));
@@ -92,7 +92,7 @@ public class Utils {
       style.setPosX(option.getInt("posX"));
     }
     if (option.hasKey("posY")) {
-      style.setPosX(option.getInt("posY"));
+      style.setPosY(option.getInt("posY"));
     }
     if (option.hasKey("rotate")) {
       style.setRotate(Rotate.valueOf(option.getString("rotate")));
@@ -146,7 +146,7 @@ public class Utils {
       style.setPosX(option.getInt("posX"));
     }
     if (option.hasKey("posY")) {
-      style.setPosX(option.getInt("posY"));
+      style.setPosY(option.getInt("posY"));
     }
     if (option.hasKey("rotate")) {
       style.setRotate(Rotate.valueOf(option.getString("rotate")));
@@ -174,7 +174,7 @@ public class Utils {
       style.setPosX(option.getInt("posX"));
     }
     if (option.hasKey("posY")) {
-      style.setPosX(option.getInt("posY"));
+      style.setPosY(option.getInt("posY"));
     }
     if (option.hasKey("rotate")) {
       style.setRotate(Rotate.valueOf(option.getString("rotate")));
@@ -202,7 +202,7 @@ public class Utils {
       style.setPosX(option.getInt("posX"));
     }
     if (option.hasKey("posY")) {
-      style.setPosX(option.getInt("posY"));
+      style.setPosY(option.getInt("posY"));
     }
     return style;
   }
@@ -221,13 +221,13 @@ public class Utils {
       style.setPosX(option.getInt("posX"));
     }
     if (option.hasKey("posY")) {
-      style.setPosX(option.getInt("posY"));
+      style.setPosY(option.getInt("posY"));
     }
     if (option.hasKey("endX")) {
-      style.setPosX(option.getInt("endX"));
+      style.setEndX(option.getInt("endX"));
     }
     if (option.hasKey("endY")) {
-      style.setPosX(option.getInt("endY"));
+      style.setEndY(option.getInt("endY"));
     }
     if (option.hasKey("thick")) {
       style.setThick(option.getInt("thick"));
