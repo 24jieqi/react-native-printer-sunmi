@@ -1,9 +1,9 @@
 package com.printersunmi;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.RemoteException;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -24,14 +24,19 @@ import com.sunmi.printerx.PrinterSdk;
 import com.sunmi.printerx.SdkException;
 import com.sunmi.printerx.api.PrintResult;
 import com.sunmi.printerx.api.QueryApi;
+import com.sunmi.printerx.enums.Command;
 import com.sunmi.printerx.enums.DividingLine;
 import com.sunmi.printerx.enums.PrinterInfo;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+
+import okhttp3.internal.Util;
 
 @ReactModule(name = PrinterSunmiModule.NAME)
 public class PrinterSunmiModule extends ReactContextBaseJavaModule {
@@ -283,6 +288,105 @@ public class PrinterSunmiModule extends ReactContextBaseJavaModule {
       });
     } catch (SdkException e) {
       promise.reject("PRINT_FILE_FAILED", e.getMessage());
+    }
+  }
+  @ReactMethod
+  public void sendEscCommand(String esc) {
+    if (currentPrinter != null) {
+      try {
+        byte[] content = esc.getBytes("gb18030");
+        currentPrinter.commandApi().sendEscCommand(content);
+      } catch (SdkException | UnsupportedEncodingException e) {
+        sendPrintErrorEvent("sendEscCommand", e.getMessage());
+      }
+    }
+  }
+  @ReactMethod
+  public void sendTsplCommand(String tspl) {
+    if (currentPrinter != null) {
+      byte[] content = tspl.getBytes(StandardCharsets.UTF_8);
+      try {
+        currentPrinter.commandApi().sendTsplCommand(content);
+      } catch (SdkException e) {
+        sendPrintErrorEvent("sendTsplCommand", e.getMessage());
+      }
+    }
+  }
+  @ReactMethod
+  public void openCashDrawer() {
+    if (currentPrinter != null) {
+      try {
+        currentPrinter.cashDrawerApi().open(null);
+      } catch (SdkException e) {
+        sendPrintErrorEvent("openCashDrawer", e.getMessage());
+      }
+    }
+  }
+  @ReactMethod
+  public boolean isCashDrawerOpen() {
+    try {
+      return currentPrinter.cashDrawerApi().isOpen();
+    } catch (SdkException e) {
+      sendPrintErrorEvent("isCashDrawerOpen", e.getMessage());
+    }
+    return false;
+  }
+  @ReactMethod
+  public void lcdConfig(String config) {
+    if (currentPrinter != null) {
+      try {
+        currentPrinter.lcdApi().config(Command.valueOf(config));
+      } catch (SdkException e) {
+        sendPrintErrorEvent("lcdConfig", e.getMessage());
+      }
+    }
+  }
+  @ReactMethod
+  public void lcdShowText(String content, ReadableMap config) {
+    if (currentPrinter != null) {
+      try {
+        int size = config.hasKey("size") ? config.getInt("size") : 32;
+        boolean fill = config.hasKey("fill") && config.getBoolean("fill");
+        currentPrinter.lcdApi().showText(content, size, fill);
+      } catch (SdkException e) {
+        sendPrintErrorEvent("lcdShowText", e.getMessage());
+      }
+    }
+  }
+  @ReactMethod
+  public void lcdShowTexts(ReadableArray texts) {
+    if (currentPrinter != null) {
+      TextsParams params = Utils.formatTexts(texts);
+      try {
+        int[] align = params.getColSpans();
+        currentPrinter.lcdApi().showTexts(params.getTexts(), align);
+      } catch (SdkException e) {
+        sendPrintErrorEvent("lcdShowTexts", e.getMessage());
+      }
+    }
+  }
+  @ReactMethod
+  public void lcdShowBitmap(String url) {
+    if (currentPrinter != null) {
+      try {
+        Bitmap image = Glide.with(reactContext).asBitmap().load(url).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).submit().get();
+        if (image.isRecycled()) {
+          return;
+        }
+        currentPrinter.lcdApi().showBitmap(image);
+      } catch (SdkException | ExecutionException | InterruptedException e) {
+        sendPrintErrorEvent("lcdShowBitmap", e.getMessage());
+      }
+    }
+  }
+  @ReactMethod
+  public void lcdShowDigital(String digital) {
+    if (currentPrinter != null) {
+      try {
+        currentPrinter.lcdApi().showDigital(digital);
+      } catch (SdkException e) {
+        sendPrintErrorEvent("lcdShowDigital", e.getMessage());
+      }
     }
   }
   @ReactMethod

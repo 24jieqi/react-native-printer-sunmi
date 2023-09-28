@@ -149,6 +149,26 @@ export default function App() {
     });
     PrinterSunmi.printCanvas(1);
   }
+  function handelSendEsc() {
+    PrinterSunmi.sendEscCommand('测试123\n');
+  }
+  function handelSendTspl() {
+    const content =
+      'SIZE 40 mm, 30 mm\r\n' +
+      'GAP 3 mm, 0 mm\r\n' +
+      'DIRECTION 1,0\r\n' +
+      'REFERENCE 0,0\r\n' +
+      'SET TEAR 1\r\n' +
+      'CLS\r\n' +
+      'TEXT 20,10, "test.ttf",0,1,1,"first line!"\r\n' +
+      'TEXT 20,51, "test.ttf",0,1,1,"second line!"\r\n' +
+      'TEXT 20,92, "test.ttf",0,1,1,"third line!"\r\n' +
+      'TEXT 20,133, "test.ttf",0,1,1,"firth line!"\r\n' +
+      //"BARCODE 40,165,\"128\",40,1,0,2,2,\"1234567890\"\r\n" +
+      'QRCODE 40,165,L, 4, A, 0,"abcdefg"\r\n' +
+      'PRINT 1,2\r\n';
+    PrinterSunmi.sendTsplCommand(content);
+  }
   return (
     <ScrollView>
       <Space direction="vertical">
@@ -169,6 +189,12 @@ export default function App() {
             <Button onPress={handleRenderBitmap}>绘制图片</Button>
             <Button onPress={handleRenderArea}>绘制特殊图形</Button>
             <Button onPress={handleRenderLabel}>综合示例</Button>
+          </Space>
+        </Card>
+        <Card title="指令集打印">
+          <Space>
+            <Button onPress={handelSendEsc}>发送ESC命令</Button>
+            <Button onPress={handelSendTspl}>发送TSPL命令</Button>
           </Space>
         </Card>
       </Space>

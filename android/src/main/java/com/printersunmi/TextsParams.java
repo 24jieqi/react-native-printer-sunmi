@@ -3,7 +3,6 @@ package com.printersunmi;
 import com.sunmi.printerx.style.TextStyle;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class TextsParams {
   private ArrayList<String> texts;

@@ -224,6 +224,8 @@ export type PrinterSunmiType = {
   renderArea: (option?: Partial<ShapeStyle>) => void;
   printCanvas: (count: number) => Promise<number>;
   printFile: (uri: string, option?: Partial<FileStyle>) => Promise<number>;
+  sendEscCommand: (content: string) => void;
+  sendTsplCommand: (content: string) => void;
   watchError: (
     errorHandler: (payload: PrintErrorMessage) => void
   ) => () => void;

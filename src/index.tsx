@@ -72,6 +72,8 @@ const PrinterAPIs: PrinterSunmiType = {
   },
   printCanvas: PrinterSunmi.printCanvas,
   printFile: PrinterSunmi.printFile,
+  sendEscCommand: PrinterSunmi.sendEscCommand,
+  sendTsplCommand: PrinterSunmi.sendTsplCommand,
   watchError(errorHandler) {
     const eventEmitter = new NativeEventEmitter(NativeModules.PrinterSunmi);
     const errorEvent = eventEmitter.addListener(
