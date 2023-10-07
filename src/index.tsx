@@ -74,6 +74,16 @@ const PrinterAPIs: PrinterSunmiType = {
   printFile: PrinterSunmi.printFile,
   sendEscCommand: PrinterSunmi.sendEscCommand,
   sendTsplCommand: PrinterSunmi.sendTsplCommand,
+  openCashDrawer: PrinterSunmi.openCashDrawer,
+  isCashDrawerOpen: PrinterSunmi.isCashDrawerOpen,
+  lcdConfig: PrinterSunmi.lcdConfig,
+  lcdShowText: PrinterSunmi.lcdShowText,
+  lcdShowTexts: PrinterSunmi.lcdShowTexts,
+  lcdShowBitmap: (uri: string) => {
+    const path = Image.resolveAssetSource(uri as ImageSourcePropType);
+    PrinterSunmi.lcdShowBitmap(path);
+  },
+  lcdShowDigital: PrinterSunmi.lcdShowDigital,
   watchError(errorHandler) {
     const eventEmitter = new NativeEventEmitter(NativeModules.PrinterSunmi);
     const errorEvent = eventEmitter.addListener(

@@ -166,6 +166,23 @@ export interface PrintErrorMessage {
   message: string;
 }
 
+export enum LCDCommod {
+  INIT = 'INIT',
+  WAKE = 'WAKE',
+  SLEEP = 'SLEEP',
+  CLEAR = 'CLEAR',
+}
+
+export interface LCDShowTextConfig {
+  size: number;
+  fill: boolean;
+}
+
+export interface LCDShowTextsItem {
+  text: string;
+  align: number;
+}
+
 export type PrinterSunmiType = {
   DEVICES_NAME: string;
   connect: () => Promise<boolean>;
@@ -226,6 +243,13 @@ export type PrinterSunmiType = {
   printFile: (uri: string, option?: Partial<FileStyle>) => Promise<number>;
   sendEscCommand: (content: string) => void;
   sendTsplCommand: (content: string) => void;
+  openCashDrawer: () => void;
+  isCashDrawerOpen: () => boolean;
+  lcdConfig: (command: LCDCommod) => void;
+  lcdShowText: (content: string, config: LCDShowTextConfig) => void;
+  lcdShowTexts: (texts: LCDShowTextsItem[]) => void;
+  lcdShowBitmap: (uri: string) => void;
+  lcdShowDigital: (digital: string) => void;
   watchError: (
     errorHandler: (payload: PrintErrorMessage) => void
   ) => () => void;

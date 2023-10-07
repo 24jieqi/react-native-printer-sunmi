@@ -6,7 +6,6 @@ import PrinterSunmi from 'react-native-printer-sunmi';
 
 export default function App() {
   const [result, setResult] = React.useState<boolean>(false);
-
   React.useEffect(() => {
     PrinterSunmi.connect().then(() => {
       setResult(true);

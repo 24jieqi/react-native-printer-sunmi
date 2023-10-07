@@ -1,6 +1,6 @@
 # react-native-printer-sunmi `v2`
 
-> 基于商米新版`Printx` SDK 实现的打印原生模块
+> 基于商米新版 `Printx` SDK 实现的打印原生模块
 
 ### v1.x 基于旧版 SDK 的实现仍然可用，使用方式见[文档](./README.old.md)
 
@@ -43,22 +43,42 @@ async function print() {
 
 ## API
 
-### SunmiPrinter.connect() => Promise<boolean> 连接/获取打印机
+> ⚠️ 钱箱控制接口&LCD 客显控制接口暂未测试
 
-### SunmiPrinter.disconnect: () => void 断开连接/释放 SDK
+### connect: () => Promise`<boolean>` 连接/获取打印机
 
-### SunmiPrinter.watchError(errorHandler: (payload: PrintErrorMessage) => void) => () => void 异常监听
+### disconnect: () => void 断开连接/释放 SDK
 
-### PrinterSunmi.getInfo: () => PrinterInfo 获取打印机信息
+### watchError(errorHandler: (payload: PrintErrorMessage) => void) => () => void 异常监听
 
-> 其余用作打印的`API`同[商米内置打印机服务文档](https://developer.sunmi.com/docs/zh-CN/xeghjk491/maceghjk502)，更多示例见[example](./example/src/App.tsx)
+### getInfo: () => PrinterInfo 获取打印机信息
+
+### 钱箱控制接口
+
+#### openCashDrawer: () => void 开启钱箱
+
+#### isCashDrawerOpen: () => boolean 获取钱箱状态
+
+### LCD 客显控制接口
+
+#### lcdConfig: (command: LCDCommod) => void 控制客显屏的状态
+
+#### lcdShowText: (content: string, config: LCDShowTextConfig) => void 显示指定大小的文本内容
+
+#### lcdShowTexts: (texts: LCDShowTextsItem[]) => void 显示多行文本内容
+
+#### lcdShowBitmap: (uri: string) => void 显示位图图像
+
+#### lcdShowDigital: (digital: string) => void 显示价格内容
+
+> 其余用作打印的 `API`同[商米内置打印机服务文档](https://developer.sunmi.com/docs/zh-CN/xeghjk491/maceghjk502)，更多示例见[example](./example/src/App.tsx)
 
 ### 接下来
 
-- [ ] 打印文件接口
-- [ ] 指令集打印
-- [ ] 钱箱控制
-- [ ] LCD 客显控制接口
+- [x] 打印文件接口
+- [x] 指令集打印
+- [x] 钱箱控制
+- [x] LCD 客显控制接口
 - [ ] 配置式 API
 
 ## License
