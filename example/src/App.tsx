@@ -30,13 +30,13 @@ export default function App() {
     PrinterSunmi.addText('小计：3件\n');
     PrinterSunmi.printTexts([
       { text: '商品', span: 2 },
-      { text: '价格', span: 1, align: 'RIGHT' },
-      { text: '数量', span: 1, align: 'RIGHT' },
+      { text: '价格', span: 1, style: { align: 'RIGHT' } },
+      { text: '数量', span: 1, style: { align: 'RIGHT' } },
     ]);
     PrinterSunmi.printTexts([
       { text: '鲜榴莲', span: 2 },
-      { text: '22', span: 1, align: 'RIGHT' },
-      { text: 'X3', span: 1, align: 'RIGHT' },
+      { text: '22', span: 1, style: { align: 'RIGHT' } },
+      { text: 'X3', span: 1, style: { align: 'RIGHT' } },
     ]);
     PrinterSunmi.printDividingLine('EMPTY', 24);
     PrinterSunmi.printDividingLine('SOLID', 2);

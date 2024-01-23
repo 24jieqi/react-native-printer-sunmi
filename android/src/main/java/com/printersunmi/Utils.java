@@ -20,6 +20,7 @@ import com.sunmi.printerx.style.QrStyle;
 import com.sunmi.printerx.style.TextStyle;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Utils {
   public static BaseStyle getBaseStyle(ReadableMap option) {
@@ -46,6 +47,9 @@ public class Utils {
   }
   public static TextStyle getTextStyle(ReadableMap option) {
     TextStyle style = TextStyle.getStyle();
+    if (option == null) {
+      return  style;
+    }
     if (option.hasKey("textSize")) {
       style.setTextSize(option.getInt("textSize"));
     }
@@ -108,10 +112,13 @@ public class Utils {
       ReadableMap item = row.getMap(i);
       String text = item.getString("text");
       int colSpan = item.hasKey("span") ? item.getInt("span") : 1;
-      String align = item.hasKey("align") ? item.getString("align") : "LEFT";
       texts.add(text);
       colSpans.add(colSpan);
-      textStyles.add(TextStyle.getStyle().setAlign(Align.valueOf(align)));
+      if (item.hasKey("style")) {
+        textStyles.add(Utils.getTextStyle(item.getMap("style")));
+      } else {
+        textStyles.add(TextStyle.getStyle());
+      }
     }
     TextsParams params = new TextsParams();
     params.setTexts(texts);

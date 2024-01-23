@@ -1,6 +1,6 @@
 import type { ImageSourcePropType } from 'react-native';
 
-interface PrinterInfo {
+type PrinterInfo = {
   /**
    * 打印机实时状态
    */
@@ -20,7 +20,7 @@ interface PrinterInfo {
   hot: string;
   density: string;
   distance: string;
-}
+};
 
 type AlignType = 'LEFT' | 'RIGHT' | 'CENTER' | 'DEFAULT';
 type RenderColorType = 'BLACK' | 'RED';
@@ -66,22 +66,21 @@ type ShapeStyleType =
   | 'PATH';
 
 type FileDuplexType = 'SINGLE' | 'DOUBLE_SHORT' | 'DOUBLE_LONG';
-interface BaseStyle {
+type BaseStyle = {
   align: AlignType;
   width: number;
   height: number;
   posX: number;
   posY: number;
   renderColor: RenderColorType;
-}
+};
 
-interface CanvasBaseStyle
-  extends Partial<Pick<BaseStyle, 'posX' | 'posY' | 'renderColor'>> {
+type CanvasBaseStyle = {
   width: number;
   height: number;
-}
+} & Partial<Pick<BaseStyle, 'posX' | 'posY' | 'renderColor'>>;
 
-interface TextStyle {
+type BaseTextStyle = {
   textSize: number;
   textWidthRatio: number;
   textHeightRatio: number;
@@ -99,9 +98,13 @@ interface TextStyle {
   posX: number;
   posY: number;
   rotate: RotateType;
-}
+};
 
-interface BarCodeStyle {
+export type PrintTextStyle = Partial<
+  Omit<BaseTextStyle, 'width' | 'height' | 'posX' | 'posY' | 'rotate'>
+>;
+
+type BarCodeStyle = {
   dotWidth: number;
   barHeight: number;
   readable: HumanReadableType;
@@ -112,9 +115,9 @@ interface BarCodeStyle {
   posX: number;
   posY: number;
   rotate: RotateType;
-}
+};
 
-interface QrCodeStyle {
+type QrCodeStyle = {
   dot: number;
   errorLevel: ErrorLevelType;
   align: AlignType;
@@ -123,9 +126,9 @@ interface QrCodeStyle {
   posX: number;
   posY: number;
   rotate: RotateType;
-}
+};
 
-interface BitmapStyle {
+type BitmapStyle = {
   algorithm: AlgorithmType;
   value: number;
   align: AlignType;
@@ -133,9 +136,9 @@ interface BitmapStyle {
   width: number;
   posX: number;
   posY: number;
-}
+};
 
-interface ShapeStyle {
+type ShapeStyle = {
   style: ShapeStyleType;
   height: number;
   width: number;
@@ -144,27 +147,27 @@ interface ShapeStyle {
   endX: number;
   endY: number;
   thick: number;
-}
+};
 
-interface FileStyle {
+type FileStyle = {
   copies: number;
   duplex: FileDuplexType;
   collate: boolean;
   rotate: RotateType;
   start: number;
   end: number;
-}
+};
 
-interface ColTextItem {
+type ColTextItem = {
   text: string;
   span?: number;
-  align?: AlignType;
-}
+  style?: PrintTextStyle;
+};
 
-export interface PrintErrorMessage {
+export type PrintErrorMessage = {
   method: string;
   message: string;
-}
+};
 
 export enum LCDCommod {
   INIT = 'INIT',
@@ -173,15 +176,15 @@ export enum LCDCommod {
   CLEAR = 'CLEAR',
 }
 
-export interface LCDShowTextConfig {
+export type LCDShowTextConfig = {
   size: number;
   fill: boolean;
-}
+};
 
-export interface LCDShowTextsItem {
+export type LCDShowTextsItem = {
   text: string;
   align: number;
-}
+};
 
 export type PrinterSunmiType = {
   DEVICES_NAME: string;
@@ -191,18 +194,8 @@ export type PrinterSunmiType = {
   initLine: (
     option?: Partial<Pick<BaseStyle, 'align' | 'width' | 'height' | 'posX'>>
   ) => void;
-  addText: (
-    text: string,
-    option?: Partial<
-      Omit<TextStyle, 'align' | 'width' | 'height' | 'posX' | 'posY' | 'rotate'>
-    >
-  ) => void;
-  printText: (
-    text: string,
-    option?: Partial<
-      Omit<TextStyle, 'align' | 'width' | 'height' | 'posX' | 'posY' | 'rotate'>
-    >
-  ) => void;
+  addText: (text: string, option?: PrintTextStyle) => void;
+  printText: (text: string, option?: PrintTextStyle) => void;
   printTexts: (texts: ColTextItem[]) => void;
   printBarCode: (
     code: string,
@@ -234,7 +227,7 @@ export type PrinterSunmiType = {
   enableTransMode: (enable: boolean) => void;
   printTrans: () => Promise<number>;
   initCanvas: (option: CanvasBaseStyle) => void;
-  renderText: (text: string, option?: Partial<TextStyle>) => void;
+  renderText: (text: string, option?: Partial<BaseTextStyle>) => void;
   renderBarCode: (code: string, option?: Partial<BarCodeStyle>) => void;
   renderQrCode: (text: string, option?: Partial<QrCodeStyle>) => void;
   renderBitmap: (uri: string, option?: Partial<BitmapStyle>) => void;

@@ -3,7 +3,6 @@ package com.printersunmi;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.RemoteException;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -35,8 +34,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
-
-import okhttp3.internal.Util;
 
 @ReactModule(name = PrinterSunmiModule.NAME)
 public class PrinterSunmiModule extends ReactContextBaseJavaModule {
